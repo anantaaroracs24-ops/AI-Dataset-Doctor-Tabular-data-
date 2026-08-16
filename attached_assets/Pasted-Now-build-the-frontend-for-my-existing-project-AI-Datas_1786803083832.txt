@@ -1,0 +1,699 @@
+Now build the frontend for my existing project "AI Dataset Doctor".
+
+IMPORTANT:
+The existing FastAPI backend is working and must NOT be deleted, rewritten, or replaced.
+
+Keep the existing backend intact.
+
+Build a modern React frontend that integrates with the existing FastAPI APIs.
+
+==================================================
+PRODUCT
+==================================================
+
+Product name:
+AI Dataset Doctor
+
+Tagline:
+"Diagnose. Clean. Discover."
+
+Core concept:
+
+AI Dataset Doctor works like a doctor for tabular datasets.
+
+A user uploads a CSV or Excel file.
+
+The system examines the dataset, diagnoses data-quality problems, discovers hidden patterns through clustering, and provides an AI-style prescription containing actionable recommendations.
+
+The entire frontend should communicate this concept visually.
+
+The product should feel like:
+
+70% medical / clinical
+30% AI / technology
+
+Do NOT make it look like a generic AI dashboard.
+
+Avoid:
+- Purple AI gradients
+- Black cyberpunk themes
+- Excessive glowing effects
+- Generic ChatGPT-style interfaces
+- Overly complicated dashboards
+
+==================================================
+VISUAL DESIGN
+==================================================
+
+Primary theme:
+
+White + light blue + blue.
+
+The interface should feel:
+- Clean
+- Premium
+- Clinical
+- Trustworthy
+- Modern
+- Intelligent
+- Minimal
+- Slightly futuristic
+
+Use mostly white backgrounds.
+
+Use light blue for cards and subtle sections.
+
+Use blue for primary buttons, highlights and active navigation.
+
+Use dark blue for headings and important text.
+
+Use semantic colors:
+- Green = healthy
+- Yellow = warning
+- Red = critical
+- Blue = information
+
+Suggested palette:
+
+Background:
+#F7FBFF
+
+White:
+#FFFFFF
+
+Light blue:
+#EAF4FF
+
+Primary blue:
+#2F80ED
+
+Deep blue:
+#1769AA
+
+Dark text:
+#16324F
+
+Success:
+#27AE60
+
+Warning:
+#F2C94C
+
+Danger:
+#EB5757
+
+Do not overuse these colors.
+
+==================================================
+DESIGN LANGUAGE
+==================================================
+
+Combine subtle medical and technology elements.
+
+Medical concepts:
+- Stethoscope
+- Medical cross
+- Diagnosis
+- Prescription
+- Health
+- Checkup
+- Treatment
+
+Technology/data concepts:
+- Data nodes
+- Neural/data network patterns
+- Charts
+- Analytics
+- AI scanning
+- Clustering
+- Pattern discovery
+
+Use Lucide icons or another professional icon library instead of emoji in the actual UI.
+
+The medical elements should be subtle and professional, not cartoonish.
+
+==================================================
+APPLICATION STRUCTURE
+==================================================
+
+Create a responsive application with:
+
+1. Dashboard
+2. Dataset
+3. Diagnosis
+4. Pattern Discovery
+5. AI Prescription
+
+Use a persistent left sidebar on desktop.
+
+Use a mobile-friendly navigation on smaller screens.
+
+Sidebar:
+
+AI Dataset Doctor logo/brand
+
+Dashboard
+Dataset
+Diagnosis
+Pattern Discovery
+AI Prescription
+
+Settings can be present as a secondary item.
+
+==================================================
+DASHBOARD
+==================================================
+
+Create a polished dashboard.
+
+Header:
+
+"Good afternoon 👋"
+
+Subtitle:
+
+"Let's check the health of your dataset."
+
+If no dataset has been uploaded yet, show a beautiful upload/checkup state.
+
+Upload area:
+
+"Start a Dataset Checkup"
+
+"Upload your CSV or Excel file and let Dataset Doctor examine it."
+
+Support:
+CSV
+XLS
+XLSX
+
+Use a drag-and-drop upload zone.
+
+Show:
+- Upload progress
+- Loading state
+- Error state
+- Success state
+
+After upload, call:
+
+POST /api/dataset/overview
+
+Use multipart/form-data.
+
+The backend accepts:
+file
+n_clusters
+
+Default n_clusters should be 3.
+
+==================================================
+DATASET HEALTH
+==================================================
+
+After analysis, show a prominent Dataset Health card.
+
+Example:
+
+Dataset Health
+
+87 / 100
+
+"Dataset needs attention"
+
+Use a circular or semi-circular gauge.
+
+The score comes from:
+
+response.health_score
+
+Do NOT hardcode this.
+
+Create dynamic health states:
+
+90-100:
+"Excellent"
+
+75-89:
+"Healthy with minor issues"
+
+50-74:
+"Needs attention"
+
+Below 50:
+"Critical"
+
+==================================================
+SUMMARY CARDS
+==================================================
+
+Show cards for:
+
+Rows
+Columns
+Missing Values
+Duplicates
+Outliers
+
+Use data from the backend response.
+
+Rows:
+response.dataset.rows
+
+Columns:
+response.dataset.columns
+
+Missing values:
+Calculate an appropriate summary from response.quality.missing_values
+
+Duplicates:
+response.quality.duplicate_rows
+
+Outliers:
+derive from response.outliers
+
+Cards should have subtle medical/data icons.
+
+==================================================
+DATASET PAGE
+==================================================
+
+Create a Dataset page showing:
+
+Dataset filename
+Rows
+Columns
+Memory usage
+Column names
+Data types
+Unique values
+
+Create a searchable and scrollable dataset preview table.
+
+Use:
+
+response.preview
+
+Make the table polished and responsive.
+
+For each column show:
+- Name
+- Data type
+- Unique values
+- Missing values
+
+Use the backend response rather than fake data.
+
+==================================================
+DIAGNOSIS PAGE
+==================================================
+
+This is one of the most important screens.
+
+Title:
+
+"Dataset Diagnosis"
+
+Subtitle:
+
+"Here's what Dataset Doctor found."
+
+Display detected issues as medical-style diagnosis cards.
+
+Examples:
+
+Critical:
+"High Missing Values"
+
+Warning:
+"Potential Outliers"
+
+Warning:
+"Duplicate Records"
+
+Healthy:
+"No significant issues detected"
+
+Use:
+
+response.recommendations
+
+Each recommendation contains:
+
+severity
+column
+problem
+recommendation
+
+Display:
+severity
+problem
+affected column
+explanation/recommendation
+
+Use clear visual hierarchy.
+
+==================================================
+AI SCANNING EXPERIENCE
+==================================================
+
+When a dataset is being analyzed, create a polished AI medical scanning animation.
+
+Example stages:
+
+"Reading dataset..."
+
+"Examining columns..."
+
+"Checking data quality..."
+
+"Detecting anomalies..."
+
+"Analyzing relationships..."
+
+"Discovering patterns..."
+
+"Preparing diagnosis..."
+
+Then:
+
+"Diagnosis complete ✓"
+
+Keep the animation subtle and professional.
+
+Do not fake the backend result.
+
+The animation should happen while the actual API request is processing.
+
+==================================================
+PATTERN DISCOVERY
+==================================================
+
+Create a Pattern Discovery page.
+
+This is the clustering feature.
+
+Use:
+
+POST /api/dataset/cluster
+
+Allow the user to select:
+
+Number of clusters
+
+2 to 10
+
+Default:
+3
+
+Provide a button:
+
+"Discover Patterns"
+
+Display:
+
+"Your dataset contains X distinct patterns."
+
+Show cluster counts from:
+
+response.cluster_counts
+
+Most importantly, visualize the PCA data.
+
+Use:
+
+response.pca.points
+
+Each point contains:
+
+x
+y
+cluster
+
+Create an interactive 2D scatter plot.
+
+Use Recharts or another suitable React chart library.
+
+The chart should support:
+- Hover tooltips
+- Cluster identification
+- Responsive resizing
+- Clean axes
+- Legend
+
+Show:
+
+PC1 explained variance
+PC2 explained variance
+
+from:
+
+response.pca.explained_variance
+
+==================================================
+CORRELATION ANALYSIS
+==================================================
+
+On the Dataset or Pattern Discovery area, include a correlation section.
+
+Use:
+
+POST /api/dataset/correlations
+
+Display the strongest relationships.
+
+Each result contains:
+
+feature_1
+feature_2
+correlation
+strength
+
+Create a clean correlation visualization.
+
+Strong positive correlations should be visually distinguishable from strong negative correlations.
+
+Do not make the visualization overly complicated.
+
+==================================================
+AI PRESCRIPTION
+==================================================
+
+This is the signature feature.
+
+Create a page/card called:
+
+"AI Prescription"
+
+It should look subtly inspired by a medical prescription.
+
+Header:
+
+AI PRESCRIPTION
+
+Patient:
+[dataset filename]
+
+Diagnosis:
+[dynamic health state]
+
+Then list recommendations.
+
+Example:
+
+01
+Missing values in income
+
+Treatment:
+Consider median imputation.
+
+02
+Potential outliers in age
+
+Treatment:
+Review extreme observations before modeling.
+
+03
+Duplicate records detected
+
+Treatment:
+Review and remove repeated observations.
+
+Use:
+
+response.recommendations
+
+Do not invent recommendations.
+
+Make this section feel like the conclusion of the dataset checkup.
+
+Include a button:
+
+"Export Prescription"
+
+For now this can generate/download a simple report if practical, otherwise implement the UI and leave the action clearly structured for later.
+
+==================================================
+API INTEGRATION
+==================================================
+
+The existing backend API is FastAPI.
+
+Existing endpoints:
+
+GET /health
+
+POST /api/dataset/analyze
+
+POST /api/dataset/cluster
+
+POST /api/dataset/correlations
+
+POST /api/dataset/overview
+
+The main dashboard should primarily use:
+
+POST /api/dataset/overview
+
+Request:
+
+multipart/form-data
+
+file:
+uploaded CSV/XLS/XLSX
+
+n_clusters:
+3
+
+Use the real API response.
+
+Do NOT create fake/mock data once the API is available.
+
+Create a centralized API service/helper so API calls are not scattered throughout components.
+
+Use an environment variable for the backend URL, for example:
+
+VITE_API_URL
+
+Do not hardcode localhost throughout the application.
+
+==================================================
+STATES
+==================================================
+
+Every API interaction must have:
+
+Loading state
+Success state
+Error state
+Empty state
+
+If the backend is unavailable, show a friendly message:
+
+"Dataset Doctor couldn't reach the analysis engine."
+
+Do not show raw stack traces to the user.
+
+==================================================
+UX
+==================================================
+
+The application should feel smooth and interactive.
+
+Use:
+- subtle hover animations
+- card transitions
+- smooth page transitions where appropriate
+- skeleton loaders
+- progress indicators
+- tooltips
+- clean empty states
+
+Do not over-animate.
+
+Prioritize usability and performance.
+
+==================================================
+RESPONSIVE DESIGN
+==================================================
+
+The application must work on:
+
+Desktop
+Laptop
+Tablet
+Mobile
+
+Desktop should have a sidebar.
+
+Mobile should have a compact navigation/menu.
+
+Tables must be horizontally scrollable on mobile.
+
+Charts must resize correctly.
+
+==================================================
+TECH STACK
+==================================================
+
+Use:
+
+React
+Vite
+Tailwind CSS
+Lucide icons
+Recharts
+
+Use reusable components.
+
+Suggested structure:
+
+src/
+  components/
+  pages/
+  services/
+  hooks/
+  utils/
+  layouts/
+
+Keep components modular and readable.
+
+==================================================
+IMPORTANT BACKEND RULE
+==================================================
+
+DO NOT modify or delete the existing Python backend.
+
+Do not change:
+- FastAPI logic
+- Dataset processing algorithms
+- Clustering implementation
+- Quality analysis
+- Statistics
+- Recommendations
+
+Only modify backend code if required for CORS, serving configuration, or frontend integration, and explain the change before doing it.
+
+==================================================
+FINAL EXPERIENCE
+==================================================
+
+The final experience should tell this story:
+
+UPLOAD
+↓
+EXAMINE
+↓
+DIAGNOSE
+↓
+DISCOVER
+↓
+PRESCRIBE
+
+The user should immediately understand:
+
+"Dataset Doctor examines my dataset just like a doctor examines a patient."
+
+Make this concept visually obvious without making the UI childish.
+
+Build the frontend now.
