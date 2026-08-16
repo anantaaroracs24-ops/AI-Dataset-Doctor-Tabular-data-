@@ -29,6 +29,10 @@ from app.services.clustering import (
     perform_clustering
 )
 
+from app.services.preprocessing import (
+    detect_feature_types
+)
+
 
 def generate_overview(df, n_clusters=3):
 
@@ -41,6 +45,28 @@ def generate_overview(df, n_clusters=3):
     # -----------------------------
     # Quality
     # -----------------------------
+
+    # -----------------------------
+    # Feature type detection
+    # -----------------------------
+
+    feature_types = detect_feature_types(df)
+
+    feature_summary = {
+        "numeric_count": len(
+            feature_types["numeric"]
+        ),
+        "ordinal_count": len(
+            feature_types["ordinal"]
+        ),
+        "nominal_count": len(
+            feature_types["nominal"]
+        ),
+        "numeric_columns": feature_types["numeric"],
+        "ordinal_columns": feature_types["ordinal"],
+        "nominal_columns": feature_types["nominal"]
+    }
+
 
     quality = analyze_quality(df)
 
@@ -69,6 +95,81 @@ def generate_overview(df, n_clusters=3):
     # -----------------------------
     # Health score
     # -----------------------------
+
+    # -----------------------------
+    # Treatment prescription
+    # -----------------------------
+
+    treatment_prescription = []
+
+    total_missing = int(
+        df.isna().sum().sum()
+    )
+
+    if total_missing > 0:
+
+        treatment_prescription.append({
+            "action": "missing_value_imputation",
+            "status": "recommended",
+            "description": (
+                f"{total_missing:,} missing values "
+                "should be treated."
+            )
+        })
+
+    if feature_types["ordinal"]:
+
+        treatment_prescription.append({
+            "action": "ordinal_encoding",
+            "status": "recommended",
+            "columns": feature_types["ordinal"],
+            "description": (
+                "Ordinal features should be encoded "
+                "while preserving their natural ordering."
+            )
+        })
+
+    if feature_types["nominal"]:
+
+        treatment_prescription.append({
+            "action": "one_hot_encoding",
+            "status": "recommended",
+            "columns": feature_types["nominal"],
+            "description": (
+                "Nominal categorical features can be "
+                "converted using one-hot encoding."
+            )
+        })
+
+    constant_columns = [
+        column
+        for column in df.columns
+        if df[column].nunique(
+            dropna=False
+        ) <= 1
+    ]
+
+    if constant_columns:
+
+        treatment_prescription.append({
+            "action": "constant_column_removal",
+            "status": "recommended",
+            "columns": constant_columns,
+            "description": (
+                f"{len(constant_columns)} constant "
+                "columns contain no useful variation."
+            )
+        })
+
+    if not treatment_prescription:
+
+        treatment_prescription.append({
+            "action": "no_major_treatment",
+            "status": "healthy",
+            "description": (
+                "No major automatic treatment is required."
+            )
+        })
 
     health_score = calculate_health_score(
         quality,
@@ -120,21 +221,26 @@ def generate_overview(df, n_clusters=3):
 
     return {
 
-        "dataset": profile,
+    "dataset": profile,
 
-        "health_score": health_score,
+    "health_score": health_score,
 
-        "quality": quality,
+    "quality": quality,
 
-        "statistics": statistics,
+    "statistics": statistics,
 
-        "outliers": outliers,
+    "outliers": outliers,
 
-        "correlations": correlations,
+    "correlations": correlations,
 
-        "recommendations": recommendations,
+    "recommendations": recommendations,
 
-        "clustering": clustering,
+    "feature_types": feature_summary,
 
-        "preview": preview
-    }
+    "treatment_prescription":
+        treatment_prescription,
+
+    "clustering": clustering,
+
+    "preview": preview
+}
