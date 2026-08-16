@@ -1,7 +1,8 @@
 import type {
   ClusteringResponse,
   CorrelationResponse,
-  OverviewResponse
+  OverviewResponse,
+  TreatmentResponse
 } from "../types";
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
@@ -99,4 +100,44 @@ export function discoverClusters(
 
 export function loadCorrelations(file: File, onProgress?: (progress: number) => void) {
   return upload<CorrelationResponse>("/api/dataset/correlations", file, {}, onProgress);
+}
+
+export function treatDataset(
+  file: File,
+  options: {
+    removeDuplicates?: boolean;
+    removeConstantColumns?: boolean;
+    clipOutliers?: boolean;
+  } = {},
+  onProgress?: (progress: number) => void
+) {
+  return upload<TreatmentResponse>(
+    "/api/dataset/treat",
+    file,
+    {
+      remove_duplicates: String(options.removeDuplicates ?? true),
+      remove_constant_columns: String(options.removeConstantColumns ?? true),
+      clip_outliers: String(options.clipOutliers ?? false)
+    },
+    onProgress
+  );
+}
+
+export function getDownloadUrl(downloadPath: string) {
+  return apiUrl(downloadPath);
+}
+
+export async function downloadTreatedDataset(downloadPath: string) {
+  const response = await fetch(getDownloadUrl(downloadPath));
+  if (!response.ok) {
+    throw new Error("Dataset Doctor couldn't download the treated dataset.");
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "dataset_doctor_treated.csv";
+  anchor.click();
+  URL.revokeObjectURL(url);
 }

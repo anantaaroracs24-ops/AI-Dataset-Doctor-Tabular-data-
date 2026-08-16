@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Activity,
   AlertTriangle,
@@ -39,14 +39,21 @@ import {
   XAxis,
   YAxis
 } from "recharts";
-import { analyzeOverview, discoverClusters, loadCorrelations } from "./services/api";
+import {
+  analyzeOverview,
+  discoverClusters,
+  downloadTreatedDataset,
+  loadCorrelations,
+  treatDataset
+} from "./services/api";
 import type {
+  ClusterProfile,
   ClusteringResponse,
   CorrelationResponse,
-  DatasetProfile,
   OverviewResponse,
   PageKey,
-  Recommendation
+  Recommendation,
+  TreatmentResponse
 } from "./types";
 
 const navItems: Array<{ key: PageKey; label: string; icon: typeof LayoutDashboard }> = [
@@ -98,7 +105,9 @@ function App() {
   const [overview, setOverview] = useState<OverviewResponse | null>(null);
   const [clustering, setClustering] = useState<ClusteringResponse | null>(null);
   const [correlations, setCorrelations] = useState<CorrelationResponse | null>(null);
+  const [treatment, setTreatment] = useState<TreatmentResponse | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [loadingKind, setLoadingKind] = useState<"analysis" | "treatment">("analysis");
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -110,6 +119,8 @@ function App() {
 
   const analyze = async (nextFile: File) => {
     setFile(nextFile);
+    setTreatment(null);
+    setLoadingKind("analysis");
     setStatus("loading");
     setProgress(8);
     setError("");
@@ -135,6 +146,7 @@ function App() {
 
   const discover = async (nClusters: number) => {
     if (!file) return;
+    setLoadingKind("analysis");
     setStatus("loading");
     setProgress(12);
     setError("");
@@ -156,6 +168,7 @@ function App() {
 
   const refreshCorrelations = async () => {
     if (!file) return;
+    setLoadingKind("analysis");
     setStatus("loading");
     setProgress(15);
     setError("");
@@ -175,6 +188,47 @@ function App() {
     }
   };
 
+  const applyTreatment = async () => {
+    if (!file) {
+      setError("Upload a dataset before applying treatment.");
+      return;
+    }
+
+    setLoadingKind("treatment");
+    setStatus("loading");
+    setProgress(8);
+    setError("");
+    try {
+      const result = await treatDataset(file, {}, (value) => {
+        setProgress((current) => Math.max(current, Math.min(value, 92)));
+      });
+      setTreatment(result);
+      setProgress(100);
+      setStatus("success");
+    } catch (requestError) {
+      setStatus("error");
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Dataset Doctor couldn't complete the treatment. Please try again."
+      );
+    }
+  };
+
+  const downloadTreatment = async () => {
+    if (!treatment) return;
+    try {
+      await downloadTreatedDataset(treatment.download_url);
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Dataset Doctor couldn't download the treated dataset."
+      );
+      setStatus("error");
+    }
+  };
+
   const dismissError = () => {
     setError("");
     if (status === "error") setStatus(overview ? "success" : "idle");
@@ -182,7 +236,7 @@ function App() {
 
   return (
     <div className="app-shell">
-      <Sidebar activePage={page} onNavigate={navigate} />
+      <Sidebar activePage={page} onNavigate={navigate} hasOverview={Boolean(overview)} hasTreatment={Boolean(treatment)} />
       <div className="mobile-header">
         <BrandMark compact />
         <button
@@ -242,10 +296,18 @@ function App() {
           />
         )}
         {page === "prescription" && (
-          <PrescriptionPage overview={overview} onUpload={analyze} onNavigate={navigate} />
+          <PrescriptionPage
+            overview={overview}
+            treatment={treatment}
+            onUpload={analyze}
+            onTreat={applyTreatment}
+            onDownload={downloadTreatment}
+            onNavigate={navigate}
+            busy={status === "loading"}
+          />
         )}
       </main>
-      {status === "loading" && <ScanOverlay progress={progress} />}
+      {status === "loading" && <ScanOverlay progress={progress} kind={loadingKind} />}
     </div>
   );
 }
