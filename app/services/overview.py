@@ -6,7 +6,8 @@ from app.services.profiler import (
 
 from app.services.quality import (
     analyze_quality,
-    calculate_health_score
+    calculate_health_score,
+    get_health_score_breakdown
 )
 
 from app.services.statistics import (
@@ -176,6 +177,11 @@ def generate_overview(df, n_clusters=3):
         outliers
     )
 
+    health_breakdown = get_health_score_breakdown(
+        quality,
+        outliers
+    )
+
     # -----------------------------
     # Correlations
     # -----------------------------
@@ -224,6 +230,8 @@ def generate_overview(df, n_clusters=3):
     "dataset": profile,
 
     "health_score": health_score,
+
+    "health_breakdown": health_breakdown,
 
     "quality": quality,
 
