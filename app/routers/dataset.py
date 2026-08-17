@@ -12,11 +12,16 @@ from fastapi import (
 
 from fastapi.responses import FileResponse
 
+from app.services.readiness import calculate_ml_readiness
 from app.services.clustering import perform_clustering
 from app.services.correlation import calculate_correlations
 from app.services.overview import generate_overview
 from app.services.profiler import load_dataset, get_basic_profile
-from app.services.quality import analyze_quality, calculate_health_score
+from app.services.quality import (
+    analyze_quality,
+    calculate_health_score,
+    get_health_score_breakdown
+)
 from app.services.statistics import calculate_statistics
 from app.services.outliers import detect_outliers
 from app.services.recommendations import generate_recommendations
@@ -61,14 +66,20 @@ async def analyze_dataset(file: UploadFile = File(...)):
     recommendations = generate_recommendations(df, quality, outliers)
     health_score = calculate_health_score(quality, outliers)
 
+    health_breakdown = get_health_score_breakdown(
+        quality,
+        outliers
+    )
+
     result = {
-        "dataset": profile,
-        "quality": quality,
-        "statistics": statistics,
-        "outliers": outliers,
-        "health_score": health_score,
-        "recommendations": recommendations
-    }
+    "dataset": profile,
+    "quality": quality,
+    "statistics": statistics,
+    "outliers": outliers,
+    "health_score": health_score,
+    "health_breakdown": health_breakdown,
+    "recommendations": recommendations
+}
 
     return make_json_safe(result)
 
@@ -242,6 +253,28 @@ async def treat_dataset_endpoint(
         }
 
     # -----------------------------------------------------
+    # Calculate ML readiness
+    # -----------------------------------------------------
+
+    try:
+
+        ml_readiness = calculate_ml_readiness(
+            original_df=df,
+            treated_df=treated_df,
+            treatment_report=report
+        )
+
+    except Exception as e:
+
+        ml_readiness = {
+            "score": 0,
+            "status": "error",
+            "checks": [],
+            "message": f"Could not calculate ML readiness: {str(e)}"
+        }
+
+
+       # -----------------------------------------------------
     # Add download information
     # -----------------------------------------------------
 
@@ -251,6 +284,8 @@ async def treat_dataset_endpoint(
     report["download_url"] = (
         f"/api/dataset/download/{treated_file_id}"
     )
+
+    report["ml_readiness"] = ml_readiness
 
     return make_json_safe(report)
 

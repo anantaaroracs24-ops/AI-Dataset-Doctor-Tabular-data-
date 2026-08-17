@@ -202,3 +202,367 @@ table { width: 100%; border-collapse: collapse; min-width: 590px; }.preview-tabl
   .prescription-sheet { padding: 25px 19px 20px; }.prescription-patient { flex-wrap: wrap; }.prescription-patient > div { min-width: 42%; }.prescription-patient > div:last-child { min-width: 100%; }.prescription-heading { margin-top: 27px; }.prescription-footer { align-items: flex-start; flex-direction: column; gap: 10px; }
   .error-banner { margin-top: -13px; }
 }
+
+
+/* =========================================================
+   DATASET DOCTOR — UI POLISH
+   ========================================================= */
+
+:root {
+  --dd-blue: #2f80ed;
+  --dd-blue-dark: #173b64;
+  --dd-blue-soft: #eaf4ff;
+  --dd-blue-pale: #f5faff;
+
+  --dd-text: #17324f;
+  --dd-text-soft: #7891aa;
+
+  --dd-border: #e2edf7;
+  --dd-green: #22b573;
+  --dd-red: #ef6461;
+  --dd-yellow: #e7ae35;
+
+  --dd-radius: 18px;
+  --dd-shadow:
+    0 12px 40px rgba(42, 93, 140, 0.07);
+}
+
+/* ---------------------------------------------------------
+   Smoothness
+   --------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(
+      circle at 85% 10%,
+      rgba(47, 128, 237, 0.055),
+      transparent 28%
+    ),
+    #f7fbff;
+}
+
+/* ---------------------------------------------------------
+   Cards
+   --------------------------------------------------------- */
+
+.card,
+.hero-dashboard > *,
+.scan-summary,
+.health-card,
+.summary-card,
+.journey-card,
+.section-block > *,
+.dashboard-lower-grid > *,
+.diagnosis-card,
+.prescription-card {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+/* Only subtle movement */
+.card:hover,
+.summary-card:hover,
+.diagnosis-card:hover,
+.prescription-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 18px 45px rgba(42, 93, 140, 0.09);
+}
+
+/* ---------------------------------------------------------
+   Buttons
+   --------------------------------------------------------- */
+
+button {
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* ---------------------------------------------------------
+   Blue primary buttons
+   --------------------------------------------------------- */
+
+.topbar-upload,
+.primary-button,
+.upload-button,
+.text-button {
+  box-shadow:
+    0 8px 22px rgba(47, 128, 237, 0.16);
+}
+
+.topbar-upload:hover,
+.primary-button:hover,
+.upload-button:hover {
+  box-shadow:
+    0 12px 28px rgba(47, 128, 237, 0.23);
+}
+
+/* ---------------------------------------------------------
+   Soft medical status dot
+   --------------------------------------------------------- */
+
+.status-dot {
+  position: relative;
+}
+
+.status-dot::after {
+  content: "";
+  position: absolute;
+
+  inset: -5px;
+
+  border-radius: 50%;
+
+  background: rgba(34, 181, 115, 0.12);
+
+  animation: statusPulse 2.4s ease-out infinite;
+}
+
+@keyframes statusPulse {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.8;
+  }
+
+  70% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------
+   Medical / tech section labels
+   --------------------------------------------------------- */
+
+.eyebrow,
+.section-kicker {
+  letter-spacing: 0.11em;
+}
+
+/* ---------------------------------------------------------
+   Upload area
+   --------------------------------------------------------- */
+
+.upload-zone {
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.upload-zone:hover {
+  border-color: rgba(47, 128, 237, 0.55);
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(47, 128, 237, 0.045),
+      transparent 65%
+    );
+}
+
+/* ---------------------------------------------------------
+   Journey / information cards
+   --------------------------------------------------------- */
+
+.journey-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.journey-card::after {
+  content: "";
+
+  position: absolute;
+
+  width: 230px;
+  height: 230px;
+
+  right: -100px;
+  bottom: -120px;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  box-shadow:
+    0 0 0 30px rgba(255, 255, 255, 0.035),
+    0 0 0 60px rgba(255, 255, 255, 0.025);
+
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------
+   Data visualization hover
+   --------------------------------------------------------- */
+
+.recharts-wrapper {
+  transition: transform 180ms ease;
+}
+
+.recharts-wrapper:hover {
+  transform: translateY(-1px);
+}
+
+/* ---------------------------------------------------------
+   Subtle tech grid
+   --------------------------------------------------------- */
+
+.page-shell::before {
+  content: "";
+
+  position: fixed;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  opacity: 0.18;
+
+  background-image:
+    linear-gradient(
+      rgba(47, 128, 237, 0.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(47, 128, 237, 0.025) 1px,
+      transparent 1px
+    );
+
+  background-size: 36px 36px;
+
+  mask-image:
+    linear-gradient(
+      to bottom,
+      black,
+      transparent 70%
+    );
+
+  z-index: -1;
+}
+
+/* ---------------------------------------------------------
+   Focus accessibility
+   --------------------------------------------------------- */
+
+button:focus-visible,
+input:focus-visible,
+label:focus-visible {
+  outline:
+    3px solid rgba(47, 128, 237, 0.25);
+
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------
+   Gentle page entrance
+   --------------------------------------------------------- */
+
+.page-heading,
+.hero-dashboard,
+.section-block,
+.dashboard-lower-grid {
+  animation:
+    ddFadeUp 420ms ease both;
+}
+
+@keyframes ddFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------------------------------------------------------
+   Respect reduced motion
+   --------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =========================================================
+   CUSTOM STETHOSCOPE CURSOR
+   ========================================================= */
+
+body {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M7 4v7a7 7 0 0 0 14 0V4' fill='none' stroke='%232f80ed' stroke-width='2.3' stroke-linecap='round'/%3E%3Cpath d='M4 4h6M18 4h6' fill='none' stroke='%232f80ed' stroke-width='2.3' stroke-linecap='round'/%3E%3Ccircle cx='21' cy='17' r='3.2' fill='white' stroke='%232f80ed' stroke-width='2'/%3E%3C/svg%3E") 3 3, auto;
+}
+
+button,
+a,
+label,
+input[type="file"],
+[role="button"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M7 4v7a7 7 0 0 0 14 0V4' fill='none' stroke='%232f80ed' stroke-width='2.3' stroke-linecap='round'/%3E%3Cpath d='M4 4h6M18 4h6' fill='none' stroke='%232f80ed' stroke-width='2.3' stroke-linecap='round'/%3E%3Ccircle cx='21' cy='17' r='3.2' fill='white' stroke='%232f80ed' stroke-width='2'/%3E%3C/svg%3E") 3 3, pointer;
+}
+
+/* =========================================================
+   SUBTLE MOUSE LIGHT
+   ========================================================= */
+
+body::before {
+  content: "";
+
+  position: fixed;
+
+  width: 420px;
+  height: 420px;
+
+  left: var(--mouse-x, 50%);
+  top: var(--mouse-y, 20%);
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(47, 128, 237, 0.045) 0%,
+      rgba(47, 128, 237, 0.018) 35%,
+      transparent 70%
+    );
+
+  pointer-events: none;
+
+  z-index: 0;
+
+  transition:
+    left 120ms ease-out,
+    top 120ms ease-out;
+}
